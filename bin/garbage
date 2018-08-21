@@ -1,11 +1,16 @@
 #!/usr/bin/env zsh
+# Define paths
 GARBAGE_DIR=${GARBAGE_DIR:-~/.garbage}
 GARBAGE_BOX="$GARBAGE_DIR/$(date +%Y/%m/%d)"
 GARBAGE_LOG="$GARBAGE_DIR/log"
 
+# Define constants
 DELIMITER=$'\t'
 
 
+# -----------------------------------------------------------------------------
+# Functions
+# -----------------------------------------------------------------------------
 garbage::usage()
 {
   case "$1" in
@@ -242,6 +247,9 @@ garbage::logging()
 }
 
 
+# -----------------------------------------------------------------------------
+# Main
+# -----------------------------------------------------------------------------
 # Initialize for garbage
 garbage::init
 
@@ -250,7 +258,6 @@ if [[ -p /dev/stdin ]]; then
   garbage::delete "${(z)$(<&0)}"
   exit $status
 fi
-
 
 # Main
 case "$1" in
