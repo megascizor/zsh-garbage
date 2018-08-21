@@ -1,14 +1,15 @@
 #compdef garbage
 
+
 function _garbage() {
   local context curcontext=$curcontext state line
   typeset -A opt_args
-  local ret=2
+  local ret=1
 
   _arguments -C \
     '(- :)'{-h,--help}'[show this help and exit]' \
-    '(-)'{-r,--restore}'[restore files from garbage box]: :_files' \
-    '(-)'{-s,--system}'[user system-trashcan instead garbage-trashcan]' \
+    '(-)'{-r,--restore}'[restore files from gomi box]: :_files' \
+    '(-)'{-s,--system}'[use system-trashcan instead gomi-trashcan]' \
     '(-)*: :_files' \
     && ret=0
 
