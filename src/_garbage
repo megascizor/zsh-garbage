@@ -1,0 +1,18 @@
+#compdef garbage
+
+function _gomi() {
+  local context curcontext=$curcontext state line
+  typeset -A opt_args
+  local ret=2
+
+  _arguments -C \
+    '(- :)'{-h,--help}'[show this help and exit]' \
+    '(-)'{-r,--restore}'[restore files from garbage box]: :_files' \
+    '(-)'{-s,--system}'[user system-trashcan instead garbage-trashcan]' \
+    '(-)*: :_files' \
+    && ret=0
+
+  return ret
+}
+
+_garbage "$@"
