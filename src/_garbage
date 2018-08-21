@@ -1,6 +1,6 @@
 #compdef garbage
 
-function _gomi() {
+function _garbage() {
   local context curcontext=$curcontext state line
   typeset -A opt_args
   local ret=2
