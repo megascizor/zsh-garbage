@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 # Define paths
-TRASH_DIR=${TRASH_DIR:-~/.trash-can}
-TRASH_BOX="$TRASH_DIR/$(date +%Y/%m/%d)"
-TRASH_LOG="$TRASH_DIR/log"
+GARBAGE_DIR=${GARBAGE_DIR:-~/.garbage}
+GARBAGE_BOX="$GARBAGE_DIR/$(date +%Y/%m/%d)"
+GARBAGE_LOG="$GARBAGE_DIR/log"
 
 # Define constants
 DELIMITER=$'\t'
@@ -11,26 +11,26 @@ DELIMITER=$'\t'
 # -----------------------------------------------------------------------------
 # Functions
 # -----------------------------------------------------------------------------
-trash::usage()
+garbage::usage()
 {
   case "$1" in
     HELP)
       cat <<HELP >&2
-usage: trash [OPTIONS] files...
-  trash delete files like rm command
-  but unlike rm, files are moved to trash box
+usage: garbage [OPTIONS] files...
+  garbage delete files like rm command
+  but unlike rm, files are moved to garbage box
 
 options:
   -h, --help     show this help message
   -r, --restore  restore discarded files
-  -s, --system   remove files to system trash box
+  -s, --system   remove files to system garbage box
 HELP
       ;;
     KEYBIND)
       cat <<KEYBIND
 keybind:
   ctrl-v show the discarded files
-  ctrl-x remove the selected files from trash by using rm command safety,
+  ctrl-x remove the selected files from garbage by using rm command safety,
          being remove really when ctrl-x is pressed twice
 KEYBIND
       ;;
@@ -40,15 +40,15 @@ KEYBIND
 }
 
 
-trash::init()
+garbage::init()
 {
-  [[ -d $TRASH_DIR ]] || mkdir -p "$TRASH_DIR"
-  [[ -d $TRASH_BOX ]] || mkdir -p "$TRASH_BOX"
-  [[ -f $TRASH_LOG ]] || touch "$TRASH_LOG"
+  [[ -d $GARBAGE_DIR ]] || mkdir -p "$GARBAGE_DIR"
+  [[ -d $GARBAGE_BOX ]] || mkdir -p "$GARBAGE_BOX"
+  [[ -f $GARBAGE_LOG ]] || touch "$GARBAGE_LOG"
 }
 
 
-trash::system()
+garbage::system()
 {
   local -a files
   local i cwd
@@ -79,15 +79,15 @@ trash::system()
   end run
 EOF
   for i in "${files[@]}"; do
-    echo "${i:A}$DELIMITER$HOME/.Trash/${i:t}"
-  done | trash::logging
+    echo "${i:A}$DELIMITER$HOME/.garbage/${i:t}"
+  done | garbage::logging
 }
 
 
-trash::restore()
+garbage::restore()
 {
   local -a arr
-  arr=(${(@f)"$(<$TRASH_LOG)"})
+  arr=(${(@f)"$(<$GARBAGE_LOG)"})
   if (( $+commands[pygmentize] && $+commands[python] )); then
     local get_styles styles style lessopen_query
     get_styles="from pygments.styles import get_all_styles
@@ -116,9 +116,9 @@ trash::restore()
     done
   }
 
-  # Check if log_list returns trash list
+  # Check if log_list returns garbage list
   if [[ -z $(log_list) ]]; then
-    echo "trash: $TRASH_LOG: Is empty" >&2
+    echo "garbage: $GARBAGE_LOG: Is empty" >&2
     return 1
   fi
 
@@ -128,14 +128,14 @@ trash::restore()
     log_list \
       | perl -pe 's/(\d+-\d+-\d+ \d\d:\d\d:\d\d)/\033[33m$1\033[m/' \
       | fzf --ansi --multi --tac --query="$q" --print-query \
-      --no-sort --expect=ctrl-v,ctrl-x,"?" --exit-0 --prompt="trash> "); do
+      --no-sort --expect=ctrl-v,ctrl-x,"?" --exit-0 --prompt="garbage> "); do
     q="$(head -1 <<< "$out")"
     k="$(head -2 <<< "$out" | tail -1)"
     res="$(sed '1,2d;/^$/d' <<< "$out")"
     [ -z "$res" ] && continue
     case "$k" in
       "?")
-        trash::usage KEYBIND
+        garbage::usage KEYBIND
         return $status
         ;;
 
@@ -214,18 +214,18 @@ trash::restore()
 }
 
 
-trash::delete()
+garbage::delete()
 {
   local f t ret=0
 
   for f in "$@"; do
     if [[ -e "$f" ]]; then
-      t="$TRASH_BOX/${f:t}.$(date '+%H_%M_%S')"
+      t="$GARBAGE_BOX/${f:t}.$(date '+%H_%M_%S')"
       command mv -f "$f" "$t" 2>/dev/null
       if [[ $status -eq 0 ]]; then
-        echo "${f:A}$DELIMITER$t" | trash::logging
+        echo "${f:A}$DELIMITER$t" | garbage::logging
       else
-        echo "$f: could not move to $TRASH_BOX" >&2
+        echo "$f: could not move to $GARBAGE_BOX" >&2
         ret=1
       fi
     else
@@ -238,40 +238,40 @@ trash::delete()
 }
 
 
-trash::logging()
+garbage::logging()
 {
   local line
   while read line; do
     [[ -n $line ]] && echo "$(date '+%Y-%m-%d')$DELIMITER$(date '+%H:%M:%S')$DELIMITER$line"
-  done >>"$TRASH_LOG"
+  done >>"$GARBAGE_LOG"
 }
 
 
 # -----------------------------------------------------------------------------
 # Main
 # -----------------------------------------------------------------------------
-# Initialize for trash
-trash::init
+# Initialize for garbage
+garbage::init
 
 # Support stdin
 if [[ -p /dev/stdin ]]; then
-  trash::delete "${(z)$(<&0)}"
+  garbage::delete "${(z)$(<&0)}"
   exit $status
 fi
 
 # Main
 case "$1" in
   -h|--help)
-    trash::usage HELP
+    garbage::usage HELP
     exit $status
     ;;
 
   -r|--restore)
-    shift; trash::restore "$@"
+    shift; garbage::restore "$@"
     ;;
 
   -s|--system)
-    shift; trash::system "$@"
+    shift; garbage::system "$@"
     ;;
   
   -*|--*)
@@ -280,11 +280,11 @@ case "$1" in
     ;;
 
   "")
-    echo "trash: too few arguments" >&2
+    echo "garbage: too few arguments" >&2
     exit 1
     ;;
 
   *)
-    trash::delete "$@"
+    garbage::delete "$@"
     ;;
 esac

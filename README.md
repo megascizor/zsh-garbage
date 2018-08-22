@@ -1,3 +1,3 @@
-# Trash
+# Garbage
 ## To do
-- Function to clean empty directory in `.trash-can`
+- Function to clean empty directory in `.garbage`
