@@ -22,7 +22,8 @@ usage: garbage [OPTIONS] files...
 
 options:
   -h, --help     show this help message
-  -r, --restore  restore discarded files
+  -c, --clean    clean the garabage box
+  -r, --restore  restore discarded files from the garabage box
   -s, --system   remove files to system garbage box
 HELP
       ;;
@@ -118,7 +119,7 @@ garbage::restore()
 
   # Check if log_list returns garbage list
   if [[ -z $(log_list) ]]; then
-    echo "garbage: $GARBAGE_LOG: Is empty" >&2
+    echo "garbage: $GARBAGE_LOG: is empty" >&2
     return 1
   fi
 
@@ -238,6 +239,16 @@ garbage::delete()
 }
 
 
+garbage::clean()
+{
+  printf "remove all files in $GARBAGE_DIR? [y/n]: "
+  if read -q; then
+    echo; rm -rf $GARBAGE_DIR/*
+  fi
+  echo
+}
+
+
 garbage::logging()
 {
   local line
@@ -272,6 +283,10 @@ case "$1" in
 
   -s|--system)
     shift; garbage::system "$@"
+    ;;
+
+  -c|--clean)
+    shift; garbage::clean
     ;;
   
   -*|--*)
