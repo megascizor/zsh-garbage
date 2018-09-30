@@ -22,8 +22,8 @@ usage: garbage [OPTIONS] files...
 
 options:
   -h, --help     show this help message
-  -c, --clean    clean the garabage box
-  -r, --restore  restore discarded files from the garabage box
+  -c, --clean    clean "garabage" trash can
+  -r, --restore  restore discarded files from "garabage" trash can
   -s, --system   remove files to system garbage box
 HELP
       ;;

@@ -8,8 +8,8 @@ function _garbage() {
 
   _arguments -C \
     '(- :)'{-h,--help}'[show this help and exit]' \
-    '(- :)'{-c,--clean}'[clean the garabage box]' \
-    '(-)'{-r,--restore}'[restore files from the garabage box]: :_files' \
+    '(- :)'{-c,--clean}'[clean "garbage" trash can]' \
+    '(-)'{-r,--restore}'[restore files from "garabage" trash can]: :_files' \
     '(-)'{-s,--system}'[use system trash can instead "garbage" trash can]' \
     '(-)*: :_files' \
     && ret=0
