@@ -241,7 +241,7 @@ garbage::delete()
 
 garbage::clean()
 {
-  printf "remove all files in $GARBAGE_DIR? [y/n]: "
+  printf "remove all files in '$GARBAGE_DIR'? [y/N]: "
   if read -q; then
     echo; rm -rf $GARBAGE_DIR/*
   fi
